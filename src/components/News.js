@@ -37,8 +37,9 @@ const News = (props) => {
 
     useEffect(() => {
         document.title = `${capitalizeFirstLetter(props.category)} - NewsStash`;
-        updateNews(page);
-    }, [props.category, updateNews]);
+        updateNews(page); // Call updateNews with the current page
+    }, [props.category, page, updateNews]); // Include 'page' in the dependency array
+    
 
     
     // const handlePrevClick= async () => {
