@@ -45,7 +45,7 @@ const News = (props) => {
 
   const fetchMoreData = async () => {
     const nextPage = page + 1;
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=eef4ea5c94e3465ab317d8344ccd4661&page=${nextPage}&pageSize=${props.pageSize}`;
+    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=process.env.REACT_APP_NEWS_API_KEY&page=${nextPage}&pageSize=${props.pageSize}`;
     setLoading(true);
     try {
       const response = await fetch(url);
