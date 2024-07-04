@@ -17,23 +17,28 @@ const News = (props) => {
         return string.charAt(0).toUpperCase()+string.slice(1);
     }
     
-    const updateNews = async () => {
+    const updateNews = async (pageNumber) => {
         props.setProgress(8);
-        const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=eef4ea5c94e3465ab317d8344ccd4661&page=${page}&pageSize=${props.pageSize}`
+        const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=eef4ea5c94e3465ab317d8344ccd4661&page=${pageNumber}&pageSize=${props.pageSize}`;
         setLoading(true);
-        let data= await fetch(url);
-        let parsedData= await data.json();
-        setArticles(parsedData.articles);
-        setTotalResults(parsedData.totalResults);
-        setLoading(false);
-        props.setProgress(100);
-        document.title= `${capitalizeFirstLetter(props.category)}- NewsStash`;
+        try {
+            let data = await fetch(url);
+            let parsedData = await data.json();
+            setArticles((prevArticles) => [...prevArticles, ...parsedData.articles]);
+            setTotalResults(parsedData.totalResults);
+            setLoading(false);
+            props.setProgress(100);
+            document.title = `${capitalizeFirstLetter(props.category)} - NewsStash`;
+        } catch (error) {
+            console.error('Error fetching news:', error);
+            setLoading(false);
+        }
     }
 
-    useEffect (() => {
-         document.title= `${capitalizeFirstLetter(props.category)}- NewsStash`;
-        updateNews();
-    }, []);
+    useEffect(() => {
+        document.title = `${capitalizeFirstLetter(props.category)} - NewsStash`;
+        updateNews(page);
+    }, [props.category, updateNews]);
 
     
     // const handlePrevClick= async () => {
