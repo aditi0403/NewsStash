@@ -17,13 +17,13 @@ const News = (props) => {
   useEffect(() => {
     const updateNews = async () => {
       props.setProgress(8);
-      const url = `http://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=eef4ea5c94e3465ab317d8344ccd4661&page=${page}&pageSize=${props.pageSize}`;
+      const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${process.env.REACT_APP_NEWS_API_KEY}&page=${page}&pageSize=${props.pageSize}`;
       setLoading(true);
       try {
         const response = await fetch(url);
         const parsedData = await response.json();
         if (parsedData.articles) {
-          setArticles((prevArticles) => [...prevArticles, ...parsedData.articles]);
+          setArticles(parsedData.articles);
           setTotalResults(parsedData.totalResults);
         } else {
           console.error('No articles found in response');
@@ -38,29 +38,27 @@ const News = (props) => {
     };
 
     document.title = `${capitalizeFirstLetter(props.category)} - NewsStash`;
+    setPage(1);  // Reset page to 1 when category changes
     updateNews(); // Call updateNews initially
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.category, page]); // Depend on props.category and page
+  }, [props.category]); // Depend only on props.category
 
   const fetchMoreData = async () => {
     const nextPage = page + 1;
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=process.env.REACT_APP_NEWS_API_KEY&page=${nextPage}&pageSize=${props.pageSize}`;
-    setLoading(true);
+    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${process.env.REACT_APP_NEWS_API_KEY}&page=${nextPage}&pageSize=${props.pageSize}`;
     try {
       const response = await fetch(url);
       const parsedData = await response.json();
       if (parsedData.articles) {
-        setArticles([...articles, ...parsedData.articles]);
+        setArticles((prevArticles) => [...prevArticles, ...parsedData.articles]);
         setTotalResults(parsedData.totalResults);
         setPage(nextPage);
       } else {
         console.error('No articles found in response');
       }
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching more news:', error);
-      setLoading(false);
     }
   };
 
